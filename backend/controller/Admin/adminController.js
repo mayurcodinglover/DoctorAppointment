@@ -2,6 +2,8 @@ import User from "../../models/user.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import Role from "../../models/role.js";
+import Doctor from "../../models/doctor.js";
+
 
 const Login = async (req, res) => {
   try {
@@ -44,8 +46,8 @@ const Login = async (req, res) => {
 //User CRUD
 const insertUser=async(req,res)=>{
     try {
-        const {name,email,password,roleid}=req.body;
-        if(!name || !email || !password || !roleid)
+        const {name,email,password,roleid,age}=req.body;
+        if(!name || !email || !password || !roleid || !age)
         {
             return res.json({status:false,message:"All Field is required"});
         }
@@ -55,7 +57,8 @@ const insertUser=async(req,res)=>{
             name,
             email,
             password:hashpassword,
-            roleid:role._id
+            roleid:role._id,
+            age
         });
         await newUser.save();
         return res.json({status:true,message:"Doctor inserted Successfully"});
@@ -105,4 +108,66 @@ const deleteUser=async(req,res)=>{
     }
 }
 
-export { Login ,insertUser,editUser,deleteUser};
+const addDoctor=async(req,res)=>{
+    const {userid,degree,experience,fees,address,aboutdoctor,speciality}=req.body;
+    const existingDoctor=await Doctor.findOne({userid});
+    if(existingDoctor)
+      {
+        console.log(existingDoctor);
+        return res.json({status:false,message:"Doctor already Exist"});
+      }    
+    try {
+        const doctor=new Doctor({
+      userid,
+      degree,
+      Experience:experience,
+      Fees:fees,
+      Address:address,
+      AboutDoctor:aboutdoctor,
+      image:req.file.filename,
+      speciality
+    });
+    await doctor.save();
+    return res.json({status:true,message:"Doctor created Successfully"});
+    } catch (error) {
+      console.log(error.message);
+      return res.json({status:false,message:"Internal server Error"});
+    }
+}
+
+
+const listDoctor=async(req,res)=>{
+  try {
+    const allDoctor=await Doctor.find({});
+  if(!allDoctor)
+  {
+    return res.json({status:true,message:"No Doctor Found"});
+  }
+  return res.json({status:true,message:"Doctor Found Successfully",allDoctor});
+  } catch (error) {
+    console.log(error.message);
+    return res.json({status:false,message:"Internal server Error"});
+  }
+}
+
+const deleteDoctor=async(req,res)=>{
+  const {id}=req.params;
+try {
+      const isDoctor=await Doctor.find({_id:id});
+  if(!isDoctor)
+  {
+    return res.json({status:false,message:"Doctor not found"});
+  }
+  await Doctor.findByIdAndDelete(id);
+  return res.json({status:true,message:"Doctor delete successfully"});
+} catch (error) {
+  console.log(error.message);
+  return res.json({status:false,message:"Internal server Error"});
+}
+}
+
+const totalAdminDataCount=async()=>{
+    
+}
+
+export { Login ,insertUser,editUser,deleteUser,addDoctor,listDoctor,deleteDoctor};
