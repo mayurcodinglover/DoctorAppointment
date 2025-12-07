@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import Role from "../../models/role.js";
 import Doctor from "../../models/doctor.js";
+import Appointment from "../../models/appointments.js";
 
 
 const Login = async (req, res) => {
@@ -166,8 +167,57 @@ try {
 }
 }
 
-const totalAdminDataCount=async()=>{
+const totalAdminDataCount=async(req,res)=>{
+    try {
+      const totalDoctor=(await Doctor.distinct("_id")).length;
+    const totalAppointment=(await Appointment.distinct("_id")).length;
+    const totalPatients=(await Appointment.distinct("uid")).length;
+
+    return res.json({success:true,message:"Total data receved",counts:{totalDoctor,totalAppointment,totalPatients}});
+    } catch (error) {
+      console.log(error);
+      return res.json({sttus:false,message:"Internal server Error"});
+    }
     
 }
 
-export { Login ,insertUser,editUser,deleteUser,addDoctor,listDoctor,deleteDoctor};
+const latestBookingAdmin=async(req,res)=>{
+  try {
+        const latestBooking = await Appointment.find({})
+  .populate({
+    path: "drid",
+    populate: {
+      path: "userid",
+      select: "name"
+    }
+  });
+        return res.json({status:true,message:"latest Booking fetched",booking:latestBooking});
+  } catch (error) {
+    console.log(error);
+    return res.json({success:false,message:"Internal server Errror"});
+  }
+}
+
+const allAppointmentsAdmin=async(req,res)=>{
+  try {
+      const appointments=await Appointment.find({})
+      .populate({
+        path:"uid",
+        select:"name age"
+      })
+      .populate({
+        path:"drid",
+        select:"Fees",
+        populate:{
+          path:"userid",
+          select:"name"
+        }
+      });
+      return res.json({success:true,message:"Appointments fetched successfully",appointment:appointments});
+  } catch (error) {
+    console.log(errro);
+    return res.json({success:false,message:"Internal server Error"})
+  }
+}
+
+export { Login ,insertUser,editUser,deleteUser,addDoctor,listDoctor,deleteDoctor,totalAdminDataCount,latestBookingAdmin,allAppointmentsAdmin};
