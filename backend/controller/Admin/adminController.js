@@ -220,4 +220,20 @@ const allAppointmentsAdmin=async(req,res)=>{
   }
 }
 
-export { Login ,insertUser,editUser,deleteUser,addDoctor,listDoctor,deleteDoctor,totalAdminDataCount,latestBookingAdmin,allAppointmentsAdmin};
+const cancelllAppointment=async(req,res)=>{
+  const {id}=req.body;
+  
+  try {
+    const updatedAppointment=await Appointment.findByIdAndUpdate(id,{$set:{status:"cancelled"}},{new:true});
+    if(updatedAppointment)
+    {
+      return res.json({status:true,message:"Appointment cancelled successfully"});
+    }
+  } catch (error) {
+    console.log(error); 
+    return res.json({status:false,message:"Internal server Error"});
+  }
+}
+
+
+export { Login ,insertUser,editUser,deleteUser,addDoctor,listDoctor,deleteDoctor,totalAdminDataCount,latestBookingAdmin,allAppointmentsAdmin,cancelllAppointment};
