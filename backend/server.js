@@ -7,6 +7,7 @@ import User from "./models/user.js";
 import bcrypt from "bcryptjs";
 import adminroute from "./routes/adminRoute.js";
 import userroute from "./routes/userRoute.js";
+import doctorroute from "./routes/doctorRoute.js";
 
 dotenv.config();
 const app=express();
@@ -59,6 +60,7 @@ intializedData();
 
 app.use("/admin",adminroute);
 app.use("/user",userroute);
+app.use("/doctor",doctorroute);
 app.get("/",(req,res)=>{
     res.send("Api is running");
 })
