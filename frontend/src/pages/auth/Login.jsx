@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { User, Lock, Stethoscope } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import {toast} from "react-toastify"
+
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -14,17 +16,25 @@ const Login = () => {
   const handleSubmit = async(e) => {
     e.preventDefault();
     setLoading(true);
-    const res=await axios.post(url+"admin/login",{email,password});
-    if(res.data)
+    try {
+          const res=await axios.post(url+"admin/login",{email,password});
+    if(res.data.status)
     {
         localStorage.setItem("token",res.data.token);
-        console.log(res.data.user.role);
+        console.log(res.data);
         if(res.data.user.role==="Admin")
         {
             navigate("/admin/dashboard")
         }
     }
-    setLoading(false);
+    else{
+      toast.error(res.data.message);
+    }
+    setLoading(false); 
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
   };
 
   return (

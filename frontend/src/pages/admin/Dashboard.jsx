@@ -1,16 +1,12 @@
-import { useNavigate } from "react-router-dom";
+const Dashboard = () => {
+  return (
+    <>
+      <h1 className="text-2xl font-semibold mb-4">
+        Admin Dashboard
+      </h1>
+      <p>Welcome to admin dashboard</p>
+    </>
+  );
+};
 
-const Dashboard=()=>{
-    const navigate=useNavigate();
-    const Logout=()=>{
-        localStorage.removeItem("token");
-        navigate('/')
-    }
-    return (
-        <>
-        <h1>Admin Dashboard</h1>
-        <button onClick={Logout}>Logout</button>
-        </>
-    )
-}
 export default Dashboard;
