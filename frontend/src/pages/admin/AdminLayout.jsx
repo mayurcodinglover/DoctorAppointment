@@ -31,6 +31,9 @@ const AdminLayout = () => {
           <Link className="p-2 rounded hover:bg-blue-500 hover:text-white  flex justify-left items-center gap-2" to="doctorlist">
             <List/><span>Doctor List</span>
           </Link>
+          <Link className="p-2 rounded hover:bg-blue-500 hover:text-white  flex justify-left items-center gap-2" to="adduser">
+            <List/><span>Add User</span>
+          </Link>
         </nav>
 
         <button

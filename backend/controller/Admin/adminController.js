@@ -44,8 +44,21 @@ const Login = async (req, res) => {
   }
 };
 
+const getUserDoctor=async (req,res)=>{
+  try {
+      const alldoctoruser=await User.find({roleid:'6929c41b374701cef30d6cfc'});
+      if(alldoctoruser)
+      {
+        return res.json({status:"true",message:"All Doctor user fetch successfully",data:alldoctoruser});
+      }
+  } catch (error) {
+    console.log(error);
+    return res.json({status:false,message:"Internal server Error"});
+  }
+}
+
 //User CRUD
-const insertUser=async(req,res)=>{
+const insertUser=async (req,res)=>{
     try {
         const {name,email,password,roleid,age}=req.body;
         if(!name || !email || !password || !roleid || !age)
@@ -62,7 +75,7 @@ const insertUser=async(req,res)=>{
             age
         });
         await newUser.save();
-        return res.json({status:true,message:"Doctor inserted Successfully"});
+        return res.json({status:true,message:"User inserted Successfully"});
     } catch (error) {
         console.log(error);
         return res.json({status:false,message:"Internal server error"});
@@ -207,7 +220,7 @@ const allAppointmentsAdmin=async(req,res)=>{
       })
       .populate({
         path:"drid",
-        select:"Fees",
+        select:"Fees image",
         populate:{
           path:"userid",
           select:"name"
@@ -236,4 +249,4 @@ const cancelllAppointment=async(req,res)=>{
 }
 
 
-export { Login ,insertUser,editUser,deleteUser,addDoctor,listDoctor,deleteDoctor,totalAdminDataCount,latestBookingAdmin,allAppointmentsAdmin,cancelllAppointment};
+export { Login ,insertUser,editUser,deleteUser,addDoctor,listDoctor,deleteDoctor,totalAdminDataCount,latestBookingAdmin,allAppointmentsAdmin,cancelllAppointment,getUserDoctor};
