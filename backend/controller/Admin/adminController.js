@@ -43,6 +43,21 @@ const Login = async (req, res) => {
     return res.json({ status: false, message: "Internal server error" });
   }
 };
+const getUser=async(req,res)=>{
+  const {id}=req.params;
+  try {
+    const user=await User.findById(id);
+    if(!user)
+    {
+      return res.json({status:false,message:"User not found"});
+    }
+    return res.json({status:true,message:"User get",data:user});
+  } catch (error) {
+    console.log(error);
+    return res.json({status:false,message:"Internal server Error"});
+    
+  }
+}
 
 const getUserDoctor=async (req,res)=>{
   try {
@@ -81,15 +96,17 @@ const insertUser=async (req,res)=>{
         return res.json({status:false,message:"Internal server error"});
     }
 }
-const editUser=async(req,res)=>{
+const updateUser=async(req,res)=>{
     try {
-        const {id,name,email,password,roleid}=req.body;
+        const {_id,name,email,password,roleid}=req.body;
         let hashedPassword;
+        console.log(_id,name,email,password,roleid);
+        
         if(password)
         {
              hashedPassword=await bcrypt.hash(password,10);
         }
-        const user=await User.findByIdAndUpdate(id,{$set:{
+        const user=await User.findByIdAndUpdate(_id,{$set:{
             name,
             email,
             password:hashedPassword,
@@ -108,12 +125,21 @@ const editUser=async(req,res)=>{
 const deleteUser=async(req,res)=>{
     try {
         const {id}=req.params;
-        
-        const deleteUser=await User.findByIdAndDelete(id);
-        if(!deleteUser)
+        const user=await User.findById(id);
+        if(!user)
         {
-            return res.json({status:false,message:"User not found"});
+          return res.json({status:false,message:"User not found"});
         }
+        const doctor=await Doctor.findOne({userid:id});
+        if(doctor)
+        {
+          await Appointment.deleteMany({drid:doctor._id});
+          await Doctor.findByIdAndDelete(doctor._id);
+        }
+        await Appointment.deleteMany({uid:id});
+
+        await User.findByIdAndDelete(id);
+
         return res.json({status:true,message:"User Deleted Successfully"});
     } catch (error) {
         console.log(error.message);
@@ -152,7 +178,7 @@ const addDoctor=async(req,res)=>{
 
 const listDoctor=async(req,res)=>{
   try {
-    const allDoctor=await Doctor.find({});
+    const allDoctor=await Doctor.find({}).populate("userid");
   if(!allDoctor)
   {
     return res.json({status:true,message:"No Doctor Found"});
@@ -247,6 +273,20 @@ const cancelllAppointment=async(req,res)=>{
     return res.json({status:false,message:"Internal server Error"});
   }
 }
+const listUsers=async(req,res)=>{
+  try {
+    const users=await User.find({}).populate("roleid");
+    if(!users)
+    {
+      return res.json({status:false,message:"No User Found"});
+    }
+    console.log(users);
+    return res.json({status:true,message:"users fetch successfully",data:users});
+  } catch (error) {
+    console.log(error);
+    return res.json({status:false,message:error});
+  }
+}
 
 
-export { Login ,insertUser,editUser,deleteUser,addDoctor,listDoctor,deleteDoctor,totalAdminDataCount,latestBookingAdmin,allAppointmentsAdmin,cancelllAppointment,getUserDoctor};
+export { Login ,insertUser,updateUser,deleteUser,addDoctor,listDoctor,deleteDoctor,totalAdminDataCount,latestBookingAdmin,allAppointmentsAdmin,cancelllAppointment,getUserDoctor,listUsers,getUser};

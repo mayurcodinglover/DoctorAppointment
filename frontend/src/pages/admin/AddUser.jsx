@@ -2,10 +2,14 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { API_URL } from "../../config/api";
+import Swal from "sweetalert2";
+
 
 const AddUser = () => {
   const [users, setUsers] = useState([]);
+  const [edit, setEdit] = useState(false);
   const [data, setData] = useState({
+    _id:"",
     name: "",
     email: "",
     password: "",
@@ -41,6 +45,19 @@ const AddUser = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      if(edit)
+      {
+        const res=await axios.put(`${API_URL}admin/edituser`,data)
+        if(res.data)
+        {
+          toast.success(res.data.message);
+          fetchUsers();
+        }
+        else{
+          toast.error(res.data.message);
+        }
+      }
+      else{
       const res = await axios.post(`${API_URL}admin/insertuser`, data);
       toast.success(res.data.message || "User added successfully");
       fetchUsers(); // refresh list
@@ -52,14 +69,38 @@ const AddUser = () => {
         roleid: "",
         age: ""
       });
+    }
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
+  const editUser=async(id)=>{
+    try {
+      const res=await axios.get(`${API_URL}admin/getuser/${id}`);
+      if(res.data)
+      {
+        setEdit(true);
+        setData(res.data.data);
+      }
+    } catch (error) {
+      toast.error(error);
+    }
+  }
+  
   const deletelUser=async(id)=>{
+    const result=await Swal.fire({
+       title: "Delete User?",
+        text: "This will delete all related Appointments and if Doctor then delete doctor also.",
+         icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#dc2626",
+    cancelButtonColor: "#6b7280",
+    confirmButtonText: "Yes, delete",
+    cancelButtonText: "Cancel"
+    });
+    if(!result.isConfirmed) return;
       try {
           const res=await axios.delete(`${API_URL}admin/deleteuser/${id}`);
-          console.log(res);
           if(res.status)
           {
             toast.success(res.data.message);
@@ -70,6 +111,8 @@ const AddUser = () => {
         toast.error(error);
       }
   }
+  console.log(data);
+  
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -155,7 +198,7 @@ const AddUser = () => {
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-md font-semibold hover:bg-blue-700 transition"
           >
-            Add User
+            {edit? "Edit User":"Add User"}
           </button>
         </form>
       </div>
@@ -197,7 +240,7 @@ const AddUser = () => {
                     </span>
                   </td>
                   <td className="px-4 py-3 flex justify-center gap-2">
-                    <button className="px-3 py-1 text-xs bg-yellow-400 text-white rounded hover:bg-yellow-500">
+                    <button className="px-3 py-1 text-xs bg-yellow-400 text-white rounded hover:bg-yellow-500" onClick={()=>editUser(u._id)}>
                       Edit
                     </button>
                     <button className="px-3 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600" onClick={()=>deletelUser(u._id)}>

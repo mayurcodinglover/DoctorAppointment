@@ -13,7 +13,7 @@ const AddDoctor = () => {
     experience: "",
     fees: "",
     address: "",
-    aboutdr: "",
+    aboutdoctor: "",
     speciality: "",
     image: null,
   });
@@ -63,6 +63,16 @@ const AddDoctor = () => {
 
       if (res.status) {
         toast.success("Doctor added successfully");
+        setData({
+          userid: "",
+    degree: "",
+    experience: "",
+    fees: "",
+    address: "",
+    aboutdoctor: "",
+    speciality: "",
+    image: null,
+        })
       }
     } catch (error) {
       console.log(error);
@@ -187,9 +197,9 @@ const AddDoctor = () => {
           <div>
             <label className="label">About Doctor</label>
             <textarea
-              name="aboutdr"
+              name="aboutdoctor"
               rows="4"
-              value={data.aboutdr}
+              value={data.aboutdoctor}
               onChange={handleChange}
               className="input"
             ></textarea>

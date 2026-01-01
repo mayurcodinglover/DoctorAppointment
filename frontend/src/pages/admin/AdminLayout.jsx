@@ -1,5 +1,5 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard,ClipboardClock ,Plus,List } from 'lucide-react';
+import { LayoutDashboard,ClipboardClock ,Plus,List,CirclePlus} from 'lucide-react';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ const AdminLayout = () => {
             <List/><span>Doctor List</span>
           </Link>
           <Link className="p-2 rounded hover:bg-blue-500 hover:text-white  flex justify-left items-center gap-2" to="adduser">
-            <List/><span>Add User</span>
+            <CirclePlus/><span>Add User</span>
           </Link>
         </nav>
 
