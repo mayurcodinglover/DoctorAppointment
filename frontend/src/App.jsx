@@ -9,7 +9,9 @@ import Appointments from './pages/admin/Appointments';
 import ListDoctor from './pages/admin/ListDoctor';
 import AdminLayout from './pages/admin/AdminLayout';
 import AddDoctor from './pages/admin/AddDoctor';
+import DoctorDashboard from "./pages/doctor/Dashboard";
 import AddUser from './pages/admin/AddUser';
+import DoctorLayout from './pages/doctor/DoctorLayout';
 
 
 function App() {
@@ -26,6 +28,9 @@ function App() {
           <Route path="adddoctor" element={<AddDoctor/>}/>
           <Route path="doctorlist" element={<ListDoctor/>}/>
           <Route path='adduser' element={<AddUser/>}/>
+        </Route>
+        <Route path='/doctor' element={<DoctorLayout/>}>
+          <Route path='dashboard' element={<DoctorDashboard/>}/>
         </Route>
      </Routes>
      <ToastContainer/>

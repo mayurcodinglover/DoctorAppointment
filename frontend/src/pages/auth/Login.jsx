@@ -26,6 +26,10 @@ const Login = () => {
         {
             navigate("/admin/dashboard")
         }
+        if(res.data.user.role==="Doctor")
+        {
+          navigate("/doctor/dashboard")
+        }
     }
     else{
       toast.error(res.data.message);

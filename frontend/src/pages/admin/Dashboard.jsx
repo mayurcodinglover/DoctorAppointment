@@ -88,7 +88,11 @@ const url=import.meta.env.VITE_URL;
             {/* Left */}
             <div className="flex items-center gap-4">
               <img
-                src={lb?.drid?.image || "/default.png"}
+                src={
+        lb?.drid?.image
+            ? `${url}uploads/${lb.drid.image}`
+            : "/default.png"
+    }
                 alt="doctorimage"
                 className="w-14 h-14 rounded-full object-cover border"
                 onError={(e) => {
