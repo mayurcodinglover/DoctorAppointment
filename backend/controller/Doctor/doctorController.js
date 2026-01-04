@@ -26,9 +26,13 @@ const latestBookingDoctor=async(req,res)=>{
     try {
         const id=req.user.id;
         const did=await Doctor.find({userid:id});
-        const appointment=await Appointment.find({drid:did},"booking_date uid").populate({
-            path:"uid",
-            select:"name"
+        const appointment=await Appointment.find({drid:did},"booking_date uid status").populate({
+           path: "drid",
+           select:"image",
+    populate: {
+      path: "userid",
+      select: "name"
+    }
         });
         return res.json({status:true,message:"Latest Booking get",appointment});
     } catch (error) {
