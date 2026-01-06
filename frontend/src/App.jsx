@@ -12,6 +12,7 @@ import AddDoctor from './pages/admin/AddDoctor';
 import DoctorDashboard from "./pages/doctor/Dashboard";
 import AddUser from './pages/admin/AddUser';
 import DoctorLayout from './pages/doctor/DoctorLayout';
+import DoctorAppointments from "./pages/doctor/Appointments";
 
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
         </Route>
         <Route path='/doctor' element={<DoctorLayout/>}>
           <Route path='dashboard' element={<DoctorDashboard/>}/>
+          <Route path='appointments' element={<DoctorAppointments/>}/>
         </Route>
      </Routes>
      <ToastContainer/>

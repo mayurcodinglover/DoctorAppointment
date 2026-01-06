@@ -43,7 +43,7 @@ const latestBookingDoctor=async(req,res)=>{
 
 const allAppointmentsDoctor=async(req,res)=>{
     try {
-        const allappointment=await Appointment.find({},"payment_mode date time").populate({
+        const allappointment=await Appointment.find({},"payment_mode date time status").populate({
             path:"drid",
             select:"Fees",
         }).populate({
