@@ -1,5 +1,6 @@
 import Doctor from "../../models/doctor.js";
 import Appointment from "../../models/appointments.js";
+import User from "../../models/user.js";
 
 const totalDoctorDataCount=async(req,res)=>{
     try {
@@ -68,9 +69,32 @@ const changeAppointmentStatus=async(req,res)=>{
         const updatedAppointment=await Appointment.findByIdAndUpdate(id,{$set:{status}},{new:true});
         return res.json({status:true,message:"status changed successfully",updatedAppointment});
     } catch (error) {
-        console.log(errro);
+        console.log(error);
+        return res.json({status:false,message:"Internal server Error"});
+    }
+}
+const getDoctor=async(req,res)=>{
+    try {
+        const user=await User.find({_id:req.user._id});
+        console.log(user[0]._id);
+        
+        const doctorUser=await Doctor.find({userid:user[0]._id}).populate({
+            path:"userid",
+            select :"name"
+        });
+        
+
+        if(!doctorUser)
+        {
+            return res.json({status:false,message:"User not found"});
+        }
+        else{
+            return res.json({status:true,message:"User get successfully",doctorUser});
+        }
+    } catch (error) {
+        console.log(error);
         return res.json({status:false,message:"Internal server Error"});
     }
 }
 
-export {totalDoctorDataCount,latestBookingDoctor,allAppointmentsDoctor,changeAppointmentStatus}
+export {totalDoctorDataCount,latestBookingDoctor,allAppointmentsDoctor,changeAppointmentStatus,getDoctor}
