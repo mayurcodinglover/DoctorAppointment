@@ -6,6 +6,9 @@ const Profile = () => {
   const url = import.meta.env.VITE_URL;
   const token = localStorage.getItem("token");
   const [user, setUser] = useState(null);  
+  const [aboutdr, setAboutDr] = useState();
+  const [fees, setFees] = useState();
+  const [address, setAddress] = useState();
   const [edit, setEdit] = useState(false); 
 
   const fetchDoctor = async () => {
@@ -22,10 +25,43 @@ const Profile = () => {
       toast.error("Failed to load profile");
     }
   };
+  const updateDoctor=async()=>{
+    try {
+      const res=await axios.post(`${url}doctor/updatedoctor`,{
+        AboutDoctor:aboutdr,
+        Fees:fees,
+        Address:address
+      },{
+        headers:{
+          Authorization:`Bearer ${token}`,
+        },
+      });
+      toast.success("Profile Updated Successfully");
+      setUser({
+        ...user,
+        AboutDoctor:aboutdr,
+        Fees:fees,
+        Address:address,
+      });
+      setEdit(false);
+    } catch (error) {
+      console.log(error);
+      toast.error(error);
+    }
+  }
 
   useEffect(() => {
     fetchDoctor();
   }, []);
+  useEffect(() => {
+  if (user) {
+    setAboutDr(user.AboutDoctor);
+    setFees(user.Fees);
+    setAddress(user.Address);
+  }
+}, [user]);
+
+
 
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center items-center p-4">
@@ -67,7 +103,7 @@ const Profile = () => {
             <div>
               <span className="font-semibold">About:</span>{" "}
               {edit ? (<>
-              <textarea name="address" id="" cols="50" rows="5" value={user?.AboutDoctor}></textarea>
+              <textarea onChange={(e)=>setAboutDr(e.target.value)} name="aboutdr" id="" cols="50" rows="5" value={aboutdr}></textarea>
               </>):(<p>{user?.AboutDoctor }</p>)}
               
             </div>
@@ -75,20 +111,28 @@ const Profile = () => {
             <div>
               <span className="font-semibold">Appointment Fee:</span>{" "}
                 {edit?(<>
-                <input type="number" name="fees" id="fees" value={user?.Fees} />
+                <input type="number" onChange={(e)=>setFees(e.target.value)} name="fees" id="fees" value={fees} />
                 </>):(<p>₹{user?.Fees}</p>)}
               
             </div>
 
             <div>
                 <span className="font-semibold">Address:</span>{" "}
-                {edit ?(<><textarea name="address" id="address" value={user?.Address} cols="50" rows="5"></textarea></>):(<p>{user?.Address}</p>)}
+                {edit ?(<><textarea name="address" onChange={(e)=>setAddress(e.target.value)} id="address" value={address} cols="50" rows="5"></textarea></>):(<p>{user?.Address}</p>)}
             </div>
           </div>
 
           {/* Action Button */}
           <div className="mt-6 flex justify-center">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition" onClick={()=>setEdit(!edit)}>
+            <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition" onClick={()=>{
+              if(edit)
+              {
+                updateDoctor();
+              }
+              else{
+                setEdit(true);
+              }
+            }}>
               {edit ? "Update": "Edit"}
             </button>
           </div>

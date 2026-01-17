@@ -96,5 +96,32 @@ const getDoctor=async(req,res)=>{
         return res.json({status:false,message:"Internal server Error"});
     }
 }
+const updateDoctor=async(req,res)=>{
+    try {
+        const id=req.user.id;
+        console.log(id);
+        const {AboutDoctor,Fees,Address} = req.body;
+        
+        const updateUser=await Doctor.findOneAndUpdate({userid:id},{
+            $set:{
+                AboutDoctor,
+                Fees,
+                Address,
+            },
+        },{
+            new:true,
+            runValidators:true,
+        });
+        if(!updateDoctor)
+        {
+            return res.json({status:false,message:"Doctor not found"});
+        }
+        return res.json({status:true,message:"User updated successfully",updateUser});
+        
+    } catch (error) {
+        console.log(error);
+        return res.json({status:false,message:"Internal server Error"});
+    }
+}
 
-export {totalDoctorDataCount,latestBookingDoctor,allAppointmentsDoctor,changeAppointmentStatus,getDoctor}
+export {totalDoctorDataCount,latestBookingDoctor,allAppointmentsDoctor,changeAppointmentStatus,getDoctor,updateDoctor}
