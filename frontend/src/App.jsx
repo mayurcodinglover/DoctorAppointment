@@ -14,7 +14,8 @@ import AddUser from './pages/admin/AddUser';
 import DoctorLayout from './pages/doctor/DoctorLayout';
 import DoctorAppointments from "./pages/doctor/Appointments";
 import DoctorProfile from "./pages/doctor/Profile";
-
+import UserDashboard from "./pages/user/Dashboard";
+import UserLayout from './pages/user/UserLayout';
 
 function App() {
 
@@ -35,6 +36,9 @@ function App() {
           <Route path='dashboard' element={<DoctorDashboard/>}/>
           <Route path='appointments' element={<DoctorAppointments/>}/>
           <Route path='profile' element={<DoctorProfile/>}/>
+        </Route>
+        <Route path='/user' element={<UserLayout/>}>
+          <Route path='dashboard' element={<UserDashboard/>}/>
         </Route>
      </Routes>
      <ToastContainer/>

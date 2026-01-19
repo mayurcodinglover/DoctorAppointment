@@ -1,5 +1,5 @@
 import express from "express";
-import { addDoctor, allAppointmentsAdmin, cancelllAppointment, deleteDoctor, deleteUser, updateUser, getUserDoctor, insertUser, latestBookingAdmin, listDoctor, Login, totalAdminDataCount,listUsers,getUser } from "../controller/Admin/adminController.js";
+import { addDoctor, allAppointmentsAdmin, cancelllAppointment, deleteDoctor, deleteUser, updateUser, getUserDoctor, insertUser, latestBookingAdmin, listDoctor, Login, totalAdminDataCount,listUsers,getUser, Register } from "../controller/Admin/adminController.js";
 import upload from "../config/multerConfig.js";
 
 const adminroute=express.Router();
@@ -16,6 +16,7 @@ adminroute.get('/allAppointmentsAdmin',allAppointmentsAdmin);
 adminroute.post('/cancelappointment',cancelllAppointment);
 adminroute.get('/getdocutoruser',getUserDoctor);
 adminroute.get('/getuser/:id',getUser);
-adminroute.get('/listusers',listUsers)
+adminroute.get('/listusers',listUsers);
+adminroute.post('/register',Register);
 
 export default adminroute;

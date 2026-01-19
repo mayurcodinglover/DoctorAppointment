@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { User, Lock, Stethoscope } from "lucide-react";
+import { User, Lock, Stethoscope,Mail } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {toast} from "react-toastify"
@@ -9,13 +9,35 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [signup, setSignup] = useState(false);
+  const [name, setname] = useState("");
   const url=import.meta.env.VITE_URL;
   const navigate=useNavigate();
   
 
   const handleSubmit = async(e) => {
     e.preventDefault();
-    setLoading(true);
+    if(signup)
+    {
+      setLoading(true);
+    try {
+          const res=await axios.post(url+"admin/register",{name,email,password});
+    if(res.data.status)
+    {
+        localStorage.setItem("token",res.data.token);
+        navigate("/user/dashboard")
+    }
+    else{
+      toast.error(res.data.message);
+    }
+    setLoading(false); 
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
+    }
+    else{
+      setLoading(true);
     try {
           const res=await axios.post(url+"admin/login",{email,password});
     if(res.data.status)
@@ -30,6 +52,10 @@ const Login = () => {
         {
           navigate("/doctor/dashboard")
         }
+        if(res.data.user.role==="User")
+        {
+          navigate("/user/dashboard")
+        }
     }
     else{
       toast.error(res.data.message);
@@ -39,6 +65,8 @@ const Login = () => {
       setLoading(false);
       console.log(error);
     }
+    }
+    
   };
 
   return (
@@ -58,6 +86,28 @@ const Login = () => {
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Input */}
+
+            {signup && (
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                 <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <User className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="name"
+                  name="name"
+                  id="name"
+                  value={name}
+                  onChange={(e) => setname(e.target.value)}
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                  placeholder="Name.."
+                  required
+                />
+              </div>
+                
+              </div>
+            )}
             <div>
               <label 
                 htmlFor="email" 
@@ -67,7 +117,7 @@ const Login = () => {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-gray-400" />
+                  <Mail className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
                   type="email"
@@ -129,7 +179,8 @@ const Login = () => {
               type="submit"
               className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
             >
-              {loading ? "Loading..": "Sign In"}
+              {signup ? "Signup":<>{loading ? "Loading..": "Sign In"}</>}
+              
             </button>
           </form>
 
@@ -164,8 +215,8 @@ const Login = () => {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Don't have an account?{" "}
-              <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
-                Sign up
+              <a href="#" onClick={()=>setSignup(!signup)} className="font-medium text-blue-600 hover:text-blue-500">
+                {signup ?"Signin" : "Signup"}
               </a>
             </p>
           </div>

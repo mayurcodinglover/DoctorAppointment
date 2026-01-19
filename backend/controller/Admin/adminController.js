@@ -5,7 +5,37 @@ import Role from "../../models/role.js";
 import Doctor from "../../models/doctor.js";
 import Appointment from "../../models/appointments.js";
 
-
+const Register=async(req,res)=>{
+  try {
+    const {name,email,password}=req.body;
+    console.log(name,email,password);
+    
+    const user=await User.findOne({email});
+    if(user)
+    {
+      return res.json({status:false,messge:"User Already exist"});
+    }
+    const role=await Role.find({rolename:"User"});
+    console.log(role);
+    
+    const hashpassword=await bcrypt.hash(password,10);
+    const usersave=User({
+      name:name,
+      roleid:role[0]._id,
+      email:email,
+      password:hashpassword
+    });
+    await usersave.save();
+    const token=jwt.sign(
+      {id:usersave._id,role:usersave.roleid.rolename},
+      process.env.JWT_SECRET,
+      {expiresIn:process.env.JWT_EXPIRE}
+    );
+    return res.json({status:true,message:"user created successfully",token:token,user:usersave});
+  } catch (error) {
+    console.log(error);
+  }
+}
 const Login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -289,4 +319,4 @@ const listUsers=async(req,res)=>{
 }
 
 
-export { Login ,insertUser,updateUser,deleteUser,addDoctor,listDoctor,deleteDoctor,totalAdminDataCount,latestBookingAdmin,allAppointmentsAdmin,cancelllAppointment,getUserDoctor,listUsers,getUser};
+export { Login ,insertUser,updateUser,deleteUser,addDoctor,listDoctor,deleteDoctor,totalAdminDataCount,latestBookingAdmin,allAppointmentsAdmin,cancelllAppointment,getUserDoctor,listUsers,getUser,Register};
